@@ -18,29 +18,42 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
+    const user=JSON.parse(localStorage.getItem("user-infos1"));
+    const id =user.userid;
     if (currentUser) {
       if (currentUser.isAvatarImageSet) {
-        fetch(`http://localhost:8000/allusers/${currentUser.userid}`, {
+        const data = fetch(`http://localhost:8000/allusers/${id}`, {
           method: "GET",
         })
-          .then((response) => response.json())
-          .then((data) => {
-            setContacts(data);
-            console.log("get data" + data);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        setContacts(data.data)
+        
       } else {
         // navigate('/avatarSet')
       }
     }
   }, [currentUser]);
 
+  useEffect(()=>{
+    const user=JSON.parse(localStorage.getItem("user-infos1"));
+    const id=user.userid;
+    
+    fetch(`http://localhost:8000/allusers/${id}`)
+    .then((response)=>response.json())
+    .then((data)=>{
+      setContacts(data)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+
+  },[currentUser])
+
+
   return (
     <Container>
       <div className="container">
         <Contact contacts={contacts} currentUser={currentUser} />
+
       </div>
     </Container>
   );
