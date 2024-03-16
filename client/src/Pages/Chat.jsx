@@ -19,7 +19,7 @@ export default function Chat() {
 
   useEffect(() => {
     const user=JSON.parse(localStorage.getItem("user-infos1"));
-    // const id =user.userid;
+    const id =user.userid;
     if (currentUser) {
       if (currentUser.isAvatarImageSet) {
         const data = fetch(`http://localhost:8000/allusers/${id}`, {
