@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Contact from "../Components/Contact";
+import Welcome from "../Components/Welcome";
+import ChatContainer from "../Components/ChatContainer";
 
 export default function Chat() {
   const navigate = useNavigate();
 
   const [contacts, setContacts] = useState([]);
   const [currentUser, setCurrentUser] = useState(undefined);
+  const [currentChat, setCurrentChat] = useState(undefined);
+
 
   useEffect(() => {
     if (!localStorage.getItem("user-infos1")) {
@@ -48,12 +52,25 @@ export default function Chat() {
 
   },[currentUser])
 
+  const handleChatChange = (chat) => {
+    setCurrentChat(chat);
+  };
+
 
   return (
     <Container>
       <div className="container">
-        <Contact contacts={contacts} currentUser={currentUser} />
 
+        <Contact contacts={contacts} 
+        currentUser={currentUser} 
+        changeChat={handleChatChange} 
+        />
+        {
+          currentChat===undefined?
+          <Welcome currentUser={currentUser}/>:
+          <ChatContainer currentChat={currentChat} />
+
+        }
       </div>
     </Container>
   );

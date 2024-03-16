@@ -23,7 +23,7 @@ export default function Contact(props) {
 
     const changeCurrentChat=(index,contact)=>{
         setCurrentSelected(index);
-    // changeChat(contact);
+        props.changeChat(contact);
 
     }
 
