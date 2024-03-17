@@ -59,7 +59,7 @@ export default function Chat() {
 
   return (
     <Container>
-      <div className="container">
+      <div className="chat-container">
 
         <Contact contacts={contacts} 
         currentUser={currentUser} 
@@ -85,7 +85,7 @@ const Container = styled.div`
   gap: 1rem;
   align-items: center;
   background-color: #131324;
-  .container {
+  .chat-container {
     height: 85vh;
     width: 85vw;
     background-color: #00000076;
