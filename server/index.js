@@ -159,6 +159,28 @@ app.post("/addmsg",(req,res)=>{
     
 })
 
+app.post("/getmsg",(req,res)=>{
+    
+    try
+    {
+        const {from,to}=req.body;
+        const messages=messageModel.find({users:{$all:[from,to]}})
+        .sort({updatedAt:1})
+
+        const projectedMessages=messages.map((msg)=>{
+            return{
+                fromSelf:msg.sender.toString()===from,
+                message: msg.message.text,
+            };
+        });
+        res.send(projectedMessages);
+    }
+    catch(err)
+    {
+        console.log(err)
+    }
+})
+
 
 server.listen(8000,()=>{
     console.log("Server running at port:8000")
