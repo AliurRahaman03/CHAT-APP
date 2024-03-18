@@ -167,19 +167,26 @@ app.post("/getmsg",(req,res)=>{
         const messages=messageModel.find({users:{$all:[from,to]}})
         .sort({updatedAt:1})
 
-        const projectedMessages=messages.map((msg)=>{
-            return{
-                fromSelf:msg.sender.toString()===from,
-                message: msg.message.text,
-            };
+        // const projectedMessages=messages.map((msg)=>{
+        //     return{
+        //         fromSelf:msg.sender.toString()===from,
+        //         message: msg.message.text,
+        //     };
+        // });
+        const projectedMessages = [];
+        messages.forEach(msg => {
+            projectedMessages.push({
+                fromSelf: msg.sender.toString() === from,
+                message: msg.message.text
+            });
         });
-        res.send(projectedMessages);
+        res.send(projectedMessages); 
     }
     catch(err)
     {
         console.log(err)
     }
-})
+}) 
 
 
 server.listen(8000,()=>{

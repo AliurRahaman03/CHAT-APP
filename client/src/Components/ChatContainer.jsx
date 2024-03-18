@@ -10,7 +10,6 @@ export default function ChatContainer({currentChat,currentUser}) {
   const [messages,setMessages]=useState([]);
 
   useEffect(()=>{
-    alert("kklsncja")
     fetch("http://localhost:8000/getmsg",{
       method:"POST",
       headers:{
