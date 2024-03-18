@@ -7,6 +7,7 @@ const bcrypt=require("bcryptjs")
 const jwt=require("jsonwebtoken")
 
 const userModel=require("./Models/userModel")
+const messageModel=require('./Models/messageModel')
 const { info } = require("console")
 
 const app=express();
@@ -131,6 +132,31 @@ app.get("/allusers/:id",async(req,res)=>{
         console.log(err)
         res.status(500).send({message:"Some problem to get users data"})
     }
+})
+
+// messages endpoint
+app.post("/addmsg",(req,res)=>{
+    try
+    {
+        const {from,to,message}=req.body;
+        messageModel.create({
+            message: { text: message },
+            users: [from, to],
+            sender: from,
+        })
+        .then((data)=>{
+            res.send({message:"message added successfully"})
+        })
+        .catch((err)=>{
+            console.log(err)
+            res.send({message:"Failed to add message"})
+        })
+    }
+    catch(err)
+    {
+        console.log(err)
+    }
+    
 })
 
 

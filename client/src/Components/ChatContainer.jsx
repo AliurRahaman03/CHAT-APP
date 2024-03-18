@@ -5,10 +5,23 @@ import Logout from "./Logout";
 import ChatInput from "./ChatInput";
 import Messages from "./Messages";
 
-export default function ChatContainer({currentChat}) {
+export default function ChatContainer({currentChat,currentUser}) {
 
     const handleSendMsg = async(msg)=>{
-
+        fetch("http://localhost:8000/addmsg",{
+          method:"POST",
+          body:JSON.stringify(msg),
+          headers:{
+            "content-type": 'application/json'
+          }
+        })
+        .then((response)=>response.json())
+        .then((data)=>{
+          console.log(data)
+        })
+        .catch((err)=>{
+          console.log(err)
+        })
     }
 
   return (
