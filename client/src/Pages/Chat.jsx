@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Contact from "../Components/Contact";
 import Welcome from "../Components/Welcome";
 import ChatContainer from "../Components/ChatContainer";
+import {io} from 'socket.io-client';
 
 export default function Chat() {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export default function Chat() {
   const [currentUser, setCurrentUser] = useState(undefined);
   const [currentChat, setCurrentChat] = useState(undefined);
 
+  const socket=useRef();
 
   useEffect(() => {
     if (!localStorage.getItem("user-infos1")) {
@@ -20,6 +22,11 @@ export default function Chat() {
       setCurrentUser(JSON.parse(localStorage.getItem("user-infos1")));
     }
   }, []);
+
+  useEffect(()=>{
+    socket.current=io("http://localhost:8000")
+    socket.current.emit("add-user",currentUser.userid)
+  },[currentUser])
 
   useEffect(() => {
     const user=JSON.parse(localStorage.getItem("user-infos1"));
@@ -68,7 +75,11 @@ export default function Chat() {
         {
           currentChat===undefined?
           <Welcome currentUser={currentUser}/>:
-          <ChatContainer currentChat={currentChat} currentUser={currentUser} />
+          <ChatContainer 
+            currentChat={currentChat} 
+            currentUser={currentUser} 
+            socket={socket} 
+          />
 
         }
       </div>

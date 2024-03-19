@@ -14,7 +14,12 @@ const app=express();
 app.use(cors());
 app.use(express.json());
 const server=http.createServer(app)
-const io=Server(server)
+const io=Server(server,{
+    cors: {
+        origin: "http://localhost:8000",
+        credentials: true,
+      },
+})
 
 mongoose.connect("mongodb://localhost:27017/chat-app")
 .then(()=>{
@@ -159,35 +164,40 @@ app.post("/addmsg",(req,res)=>{
     
 })
 
-app.post("/getmsg",(req,res)=>{
-    
-    try
-    {
-        const {from,to}=req.body;
-        const messages=messageModel.find({users:{$all:[from,to]}})
-        .sort({updatedAt:1})
 
-        // const projectedMessages=messages.map((msg)=>{
-        //     return{
-        //         fromSelf:msg.sender.toString()===from,
-        //         message: msg.message.text,
-        //     };
-        // });
-        const projectedMessages = [];
-        messages.forEach(msg => {
-            projectedMessages.push({
-                fromSelf: msg.sender.toString() === from,
-                message: msg.message.text
-            });
-        });
-        res.send(projectedMessages); 
+app.post("/getmsg", async (req, res) => {
+    try {
+        const { from, to } = req.body;
+        const messages = await messageModel.find({ users: { $all: [from, to] } }).sort({ updatedAt: 1 });
+        const projectedMessages = messages.map(msg => ({
+            fromSelf: msg.sender.toString() === from,
+            message: msg.message.text
+        }));
+        res.send(projectedMessages);
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "Failed to retrieve messages" });
     }
-    catch(err)
-    {
-        console.log(err)
-    }
-}) 
+});
 
+
+//websocket portion
+
+global.onlineUsers=new Map()
+
+io.on("connection",(socket)=>{
+    global.chatSocket=socket;
+    socket.on("add-user",(userId)=>{
+        onlineUsers.set(userId,socket.id)
+    });
+    socket.on("send-msg",(data)=>{
+        const sendUserSocket=onlineUsers.get(data.to)
+        if(sendUserSocket)
+        {
+            socket.to(sendUserSocket).emit("msg-receive",data.msg)
+        }
+    })
+})
 
 server.listen(8000,()=>{
     console.log("Server running at port:8000")

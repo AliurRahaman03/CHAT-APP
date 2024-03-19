@@ -103,7 +103,7 @@ function Login() {
         ]} action="">
           <div>
             <img src="" alt="" />
-            <h1>CHAT-APP</h1>
+            <h1>ChitChatZone</h1>
           </div>
           <input className="inp" type="email" name="email" placeholder="E-mail" onChange={handleChange}/>
           <input className="inp" type="password" name="password" placeholder="Password" onChange={handleChange}/>          
