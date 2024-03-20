@@ -2,7 +2,7 @@ const http = require("http")
 const express=require("express")
 const cors=require("cors")
 const mongoose=require("mongoose")
-const Server=require("socket.io")
+const socket=require("socket.io")
 const bcrypt=require("bcryptjs")
 const jwt=require("jsonwebtoken")
 
@@ -13,13 +13,13 @@ const { info } = require("console")
 const app=express();
 app.use(cors());
 app.use(express.json());
-const server=http.createServer(app)
-const io=Server(server,{
-    cors: {
-        origin: "http://localhost:8000",
-        credentials: true,
-      },
-})
+// const server=http.createServer(app)
+// const io=Server(server,{
+//     cors: {
+//         origin: "http://localhost:8000",
+//         credentials: true,
+//       },
+// })
 
 mongoose.connect("mongodb://localhost:27017/chat-app")
 .then(()=>{
@@ -181,7 +181,22 @@ app.post("/getmsg", async (req, res) => {
 });
 
 
+
+
+// server.listen(8000,()=>{
+//     console.log("Server running at port:8000")
+// })
+const server = app.listen(8000, () =>
+  console.log(`Server started on 8000`)
+);
+
 //websocket portion
+const io = socket(server, {
+    cors: {
+      origin: "http://localhost:8000",
+      credentials: true,
+    },
+  });
 
 global.onlineUsers=new Map()
 
@@ -191,14 +206,11 @@ io.on("connection",(socket)=>{
         onlineUsers.set(userId,socket.id)
     });
     socket.on("send-msg",(data)=>{
+        console.log({data})
         const sendUserSocket=onlineUsers.get(data.to)
         if(sendUserSocket)
         {
-            socket.to(sendUserSocket).emit("msg-receive",data.msg)
+            socket.to(sendUserSocket).emit("msg-receive",data.message)
         }
     })
-})
-
-server.listen(8000,()=>{
-    console.log("Server running at port:8000")
 })

@@ -15,17 +15,23 @@ export default function Chat() {
 
   const socket=useRef();
 
+  // useEffect(()=>{
+  //   console.log(currentChat)
+  //   console.log(currentUser)
+  // })
   useEffect(() => {
     if (!localStorage.getItem("user-infos1")) {
       navigate("/login");
     } else {
       setCurrentUser(JSON.parse(localStorage.getItem("user-infos1")));
     }
-  }, []);
+  },[]);
+
+  const id=JSON.parse(localStorage.getItem('user-infos1'))
 
   useEffect(()=>{
-    socket.current=io("http://localhost:8000")
-    socket.current.emit("add-user",currentUser.userid)
+    socket.current=io("http://localhost:4000")
+    socket.current.emit("add-user",id)
   },[currentUser])
 
   useEffect(() => {

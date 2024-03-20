@@ -2,8 +2,8 @@
 import styled from "styled-components"
 import Logout from "./Logout";
 import ChatInput from "./ChatInput";
-// import Messages from "./Messages";
 import { useEffect, useRef, useState } from "react";
+import {v4 as uuidv4} from 'uuid'
 
 export default function ChatContainer({currentChat,currentUser,socket}) {
 
@@ -31,7 +31,23 @@ export default function ChatContainer({currentChat,currentUser,socket}) {
     })
   },[currentChat])
 
+  useEffect(() => {
+    const getCurrentChat = async () => {
+      if (currentChat) {
+        await JSON.parse(
+          localStorage.getItem("user-infos1")
+        ).userid;
+      }
+    };
+    getCurrentChat();
+  }, [currentChat]);
+
   const handleSendMsg = (msg)=>{
+        socket.current.emit("send-msg", {
+          to:currentChat._id,
+          from:currentUser.userid,
+        });
+
         fetch("http://localhost:8000/addmsg",{
           method:"POST",
           body:JSON.stringify({
@@ -44,20 +60,18 @@ export default function ChatContainer({currentChat,currentUser,socket}) {
           }
         })
         .then((response)=>response.json())
-        .then((data)=>{
-          console.log(data)
+        .then(()=>{
+          // console.log(data)
+          const msgs=[...messages];
+          msgs.push({fromSelf:true,message:msg})
+          setMessages(msgs);
         })
         .catch((err)=>{
           console.log(err)
         });
-        socket.current.emit("send-msg",{
-          to:currentChat._id,
-          from:currentUser.userid,
-        });
+        
 
-        const msgs=[...messages];
-        msg.push({fromSelf:true,message:msg})
-        setMessages(msgs);
+        
     }
     useEffect(()=>{
       if(socket.current)
@@ -98,19 +112,19 @@ export default function ChatContainer({currentChat,currentUser,socket}) {
         {/* <Messages/> */}
         <div className="chat-messages">
           {
-            messages.map((message,index)=>{
+            messages.map((message)=>{
               return (
-                <div 
-                  key={index}
-                  className={`message ${
-                  message.fromSelf ? "sended":"received"
-                }`}>
-                  
-                  <div className="content">
-                    <p>{message.message}</p>
-                  </div>
-
+                <div ref={scrollRef} key={uuidv4()}>
+              <div
+                className={`message ${
+                  message.fromSelf ? "sended" : "received"
+                }`}
+              >
+                <div className="content ">
+                  <p>{message.message}</p>
                 </div>
+              </div>
+            </div>
               )
             })
           }
@@ -174,13 +188,13 @@ overflow: hidden;
     }
   }
   .sended {
-    justify-content: flex-start;
+    justify-content: flex-end;
     .content {
       background-color: #4f04ff21;
     }
   }
   .received {
-    justify-content: flex-end;
+    justify-content: flex-start;
     .content {
       background-color: #9900ff20;
     }
