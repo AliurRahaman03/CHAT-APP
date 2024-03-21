@@ -5,7 +5,7 @@ import ChatInput from "./ChatInput";
 import { useEffect, useRef, useState } from "react";
 import {v4 as uuidv4} from 'uuid'
 
-export default function ChatContainer({currentChat,currentUser,socket}) {
+export default function ChatContainer({currentChat,currentUser/*, socket*/}) {
 
   const [messages,setMessages]=useState([]);
   const [arrivalMessage,setArrivalMessage]=useState(null);
@@ -43,10 +43,10 @@ export default function ChatContainer({currentChat,currentUser,socket}) {
   }, [currentChat]);
 
   const handleSendMsg = (msg)=>{
-        socket.current.emit("send-msg", {
-          to:currentChat._id,
-          from:currentUser.userid,
-        });
+        // socket.current.emit("send-msg", {
+        //   to:currentChat._id,
+        //   from:currentUser.userid,
+        // });
 
         fetch("http://localhost:8000/addmsg",{
           method:"POST",
@@ -73,14 +73,14 @@ export default function ChatContainer({currentChat,currentUser,socket}) {
 
         
     }
-    useEffect(()=>{
-      if(socket.current)
-      {
-        socket.current.on("msg-receive",(msg)=>{
-          setArrivalMessage({fromSelf:true,message:msg})
-        })
-      }
-    },[])
+    // useEffect(()=>{
+    //   if(socket.current)
+    //   {
+    //     socket.current.on("msg-receive",(msg)=>{
+    //       setArrivalMessage({fromSelf:true,message:msg})
+    //     })
+    //   }
+    // },[])
     
     useEffect(()=>{
       arrivalMessage && setArrivalMessage((prev)=> [...prev,arrivalMessage]);

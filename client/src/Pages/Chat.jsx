@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Contact from "../Components/Contact";
 import Welcome from "../Components/Welcome";
 import ChatContainer from "../Components/ChatContainer";
-import {io} from 'socket.io-client';
+// import {io} from 'socket.io-client';
 
 export default function Chat() {
   const navigate = useNavigate();
@@ -27,12 +27,12 @@ export default function Chat() {
     }
   },[]);
 
-  const id=JSON.parse(localStorage.getItem('user-infos1'))
+  // const id=JSON.parse(localStorage.getItem('user-infos1'))
 
-  useEffect(()=>{
-    socket.current=io("http://localhost:4000")
-    socket.current.emit("add-user",id)
-  },[currentUser])
+  // useEffect(()=>{
+  //   socket.current=io("http://localhost:4000")
+  //   socket.current.emit("add-user",id)
+  // },[currentUser])
 
   useEffect(() => {
     const user=JSON.parse(localStorage.getItem("user-infos1"));
