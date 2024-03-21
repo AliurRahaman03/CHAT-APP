@@ -206,7 +206,7 @@ io.on("connection",(socket)=>{
         onlineUsers.set(userId,socket.id)
     });
     socket.on("send-msg",(data)=>{
-        console.log({data})
+        console.log(data.to)
         const sendUserSocket=onlineUsers.get(data.to)
         if(sendUserSocket)
         {
