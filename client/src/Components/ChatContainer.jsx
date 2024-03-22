@@ -43,7 +43,7 @@ export default function ChatContainer({currentChat,currentUser, socket}) {
   }, [currentChat]);
 
   const handleSendMsg = (msg)=>{
-        socket.current.emit("send-msg", {
+        socket.current.emit("sended-msg", {
           to:currentChat._id,
           from:currentUser.userid,
         });
@@ -76,7 +76,7 @@ export default function ChatContainer({currentChat,currentUser, socket}) {
 
       if(socket.current)
       {
-        socket.current.on("msg-receive",(msg)=>{
+        socket.current.on("receive-msg",(msg)=>{
           console.log({messages:msg})
           setArrivalMessage({fromSelf:true,message:msg})
         })

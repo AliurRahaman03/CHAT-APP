@@ -190,6 +190,7 @@ const server = app.listen(8000, () =>
   console.log(`Server started on 8000`)
 );
 
+
 //websocket portion
 const io = socket(server, {
     cors: {
@@ -205,12 +206,12 @@ io.on("connection",(socket)=>{
     socket.on("add-user",(userId)=>{
         onlineUsers.set(userId,socket.id)
     });
-    socket.on("send-msg",(data)=>{
+    socket.on("sended-msg",(data)=>{
         console.log(data.to)
         const sendUserSocket=onlineUsers.get(data.to)
         if(sendUserSocket)
         {
-            socket.to(sendUserSocket).emit("msg-receive",data.message)
+            socket.to(sendUserSocket).emit("receive-msg",data.message)
         }
     })
 })
